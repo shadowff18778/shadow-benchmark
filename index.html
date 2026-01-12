@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Shadow Benchmark Pro</title>
+    <title>Shadow Benchmark Pro - Extreme Edition</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -12,129 +12,99 @@
         :root {
             --shadow-bg: #050505;
             --shadow-card: #0f0f0f;
-            --shadow-accent: #3b82f6;
+            --shadow-accent: #ef4444; /* Rouge pour le côté extrême */
             --shadow-text: #ffffff;
         }
 
-        /* Suppression de la scrollbar */
         * {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
-            user-select: none; /* Interdire la sélection de texte */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            user-select: none;
             -webkit-touch-callout: none;
         }
-        *::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-        }
+        *::-webkit-scrollbar { display: none; }
 
         body {
             background-color: var(--shadow-bg);
             color: var(--shadow-text);
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow: hidden; /* Fixer l'écran */
+            overflow: hidden;
             height: 100vh;
             width: 100vw;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
         }
 
-        /* Effet de grain subtil */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.03;
+            opacity: 0.04;
             pointer-events: none;
             z-index: 1;
         }
 
-        /* Animations Modal */
         #welcome-modal {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.98);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .modal-content {
-            background: linear-gradient(145deg, #161616, #0c0c0c);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(145deg, #1a1a1a, #080808);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 3rem 2rem;
-            border-radius: 32px;
+            border-radius: 40px;
             max-width: 420px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            transform: translateY(0);
-            transition: transform 0.6s ease;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.9);
         }
 
-        .shadow-glow-text {
-            background: linear-gradient(180deg, #fff 0%, #666 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
-
-        /* Dashboard & Cards */
         .glass-card {
-            background: rgba(20, 20, 20, 0.6);
+            background: rgba(15, 15, 15, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-radius: 35px;
+            backdrop-filter: blur(20px);
             z-index: 2;
-        }
-
-        .progress-container {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #3b82f6, #60a5fa);
             width: 0%;
-            transition: width 0.4s cubic-bezier(0.1, 0.7, 1, 0.1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transition: width 0.3s linear;
         }
 
-        .btn-premium {
-            background: #fff;
-            color: #000;
-            font-weight: 700;
-            padding: 1.2rem;
-            border-radius: 20px;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+        .alert-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
+            z-index: 50;
+            display: none;
+            animation: pulseAlert 0.5s infinite alternate;
         }
 
-        .btn-premium:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(255,255,255,0.2);
-        }
-
-        .btn-premium:active {
-            transform: translateY(1px);
-        }
-
-        #gpu-container canvas {
-            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-        }
-
-        /* Scoring animation */
-        .score-number {
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -2px;
+        @keyframes pulseAlert {
+            from { opacity: 0.7; transform: translate(-50%, -50%) scale(0.95); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
         }
 
         .hidden { display: none !important; }
@@ -142,220 +112,228 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- MODAL DE BIENVENUE -->
     <div id="welcome-modal">
         <div class="modal-content">
-            <div class="flex justify-center mb-6">
-                <div class="w-12 h-12 rounded-full border-2 border-blue-500 flex items-center justify-center animate-pulse">
-                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                </div>
-            </div>
-            <h1 class="text-[10px] uppercase tracking-[0.3em] text-blue-500 font-bold mb-3">Powered By Shadow</h1>
-            <h2 class="text-3xl font-bold mb-4 tracking-tight">Vérification Système</h2>
-            <p class="text-gray-500 text-sm leading-relaxed mb-10 px-4">
-                Ce terminal de test va saturer vos composants pour établir un score de performance précis. Restez sur cette page durant l'opération.
+            <h1 class="text-[10px] uppercase tracking-[0.4em] text-blue-500 font-bold mb-4">Shadow Architecture</h1>
+            <h2 class="text-3xl font-extrabold mb-4">Extreme Stress Test</h2>
+            <p class="text-gray-400 text-sm mb-10 px-6">
+                Attention : Ce test pousse votre matériel dans ses derniers retranchements. Une chauffe de l'appareil est normale.
             </p>
-            <button onclick="closeModal()" class="w-full btn-premium">
-                INITIALISER
+            <button onclick="closeModal()" class="w-full py-5 bg-white text-black font-black rounded-2xl hover:bg-blue-500 hover:text-white transition-all duration-500">
+                J'ACCEPTE LES RISQUES
             </button>
         </div>
     </div>
 
-    <!-- MAIN UI -->
-    <main id="main-ui" class="w-full max-w-lg px-6 opacity-0 transition-all duration-1000 scale-95">
+    <main id="main-ui" class="w-full max-w-lg px-6 opacity-0 transition-all duration-1000">
         <header class="text-center mb-10">
-            <h1 class="text-3xl shadow-glow-text mb-1">SHADOW ENGINE</h1>
-            <div class="flex items-center justify-center gap-2">
-                <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Protocole de test sécurisé</p>
-            </div>
+            <h1 class="text-3xl font-black italic tracking-tighter mb-1">SHADOW ENGINE <span class="text-blue-600">X</span></h1>
+            <p id="device-display" class="text-[11px] text-gray-500 uppercase font-bold tracking-[0.2em]">Identification de l'appareil...</p>
         </header>
 
-        <div id="dashboard" class="glass-card p-10">
+        <div id="dashboard" class="glass-card p-10 relative overflow-hidden">
+            <div id="alert-box" class="alert-overlay">⚠️ Instabilité Détectée</div>
+
             <!-- IDLE -->
             <div id="idle-state">
-                <div class="space-y-6 mb-10">
-                    <div class="flex justify-between items-center border-b border-white/5 pb-4">
-                        <span class="text-xs text-gray-500 uppercase">Processeur</span>
-                        <span id="cpu-name" class="text-sm font-medium italic text-gray-300">Détection...</span>
-                    </div>
-                    <div class="flex justify-between items-center border-b border-white/5 pb-4">
-                        <span class="text-xs text-gray-500 uppercase">Architecture</span>
-                        <span id="os-name" class="text-sm font-medium text-gray-300">Vérification...</span>
-                    </div>
+                <div class="bg-white/5 p-6 rounded-2xl mb-10 text-center">
+                    <p class="text-xs text-gray-500 mb-2 uppercase tracking-widest">Statut Système</p>
+                    <p class="text-xl font-bold text-green-500">Optimisé</p>
                 </div>
-                <button id="start-btn" onclick="runBenchmark()" class="w-full py-5 bg-blue-600 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-all duration-300">
-                    START BENCHMARK
+                <button onclick="runBenchmark()" class="w-full py-6 bg-blue-600 rounded-3xl font-black text-xl hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all">
+                    LANCER LE BENCHMARK
                 </button>
             </div>
 
             <!-- RUNNING -->
             <div id="running-state" class="hidden">
-                <div class="flex justify-between items-end mb-4">
-                    <div class="text-left">
-                        <p id="test-label" class="text-blue-400 font-bold text-[10px] uppercase tracking-widest mb-1">Analyse...</p>
-                        <div class="text-4xl font-extrabold score-number" id="timer">60</div>
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <p id="test-label" class="text-gray-500 font-bold text-[10px] uppercase mb-1">Analyse en cours</p>
+                        <div class="text-5xl font-black italic" id="timer">60</div>
                     </div>
-                    <div class="text-right pb-1">
-                        <span class="text-[10px] text-gray-600 font-bold uppercase">Stabilité : 99.8%</span>
+                    <div class="text-right">
+                        <div id="performance-status" class="text-[10px] bg-green-500/20 text-green-500 px-3 py-1 rounded-full font-bold uppercase">Performance Stable</div>
                     </div>
                 </div>
                 
-                <div class="progress-container">
+                <div class="h-1 bg-white/5 rounded-full mb-8">
                     <div id="progress-bar" class="progress-fill"></div>
                 </div>
 
-                <div id="gpu-container" class="mt-8 relative h-[180px] bg-black/40 rounded-2xl border border-white/5">
-                    <!-- Three.js Canvas injecté ici -->
+                <div id="gpu-container" class="h-48 bg-black/60 rounded-3xl border border-white/5 relative overflow-hidden">
+                    <!-- 3D Scene -->
                 </div>
+                
+                <p id="thermal-msg" class="text-[10px] text-gray-600 mt-6 text-center italic transition-all"></p>
             </div>
 
             <!-- RESULTS -->
-            <div id="results-state" class="hidden text-center py-4">
-                <p class="text-blue-500 font-bold text-[10px] uppercase tracking-[0.4em] mb-4">Benchmark Terminé</p>
-                <div class="text-6xl font-black score-number mb-10" id="final-score">0</div>
+            <div id="results-state" class="hidden text-center py-6">
+                <p class="text-gray-500 text-[10px] font-bold uppercase mb-4 tracking-[0.5em]">Score Global Shadow X</p>
+                <div class="text-7xl font-black mb-12 italic" id="final-score">0</div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white/5 p-5 rounded-2xl border border-white/5">
-                        <p class="text-[9px] text-gray-500 uppercase font-bold mb-1">Calculs CPU</p>
-                        <p id="cpu-score" class="text-xl font-bold">--</p>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="bg-white/5 p-6 rounded-3xl border border-white/5">
+                        <p class="text-[9px] text-gray-500 uppercase mb-2">Multi-Thread</p>
+                        <p id="cpu-score" class="text-2xl font-black">--</p>
                     </div>
-                    <div class="bg-white/5 p-5 rounded-2xl border border-white/5">
-                        <p class="text-[9px] text-gray-500 uppercase font-bold mb-1">Rendu GPU</p>
-                        <p id="gpu-score" class="text-xl font-bold">--</p>
+                    <div class="bg-white/5 p-6 rounded-3xl border border-white/5">
+                        <p class="text-[9px] text-gray-500 uppercase mb-2">Graphics 3D</p>
+                        <p id="gpu-score" class="text-2xl font-black">--</p>
                     </div>
                 </div>
-
-                <button onclick="location.reload()" class="mt-12 text-gray-600 hover:text-white text-[10px] uppercase tracking-widest font-bold transition-colors">
-                    Relancer l'analyse
-                </button>
             </div>
         </div>
     </main>
 
     <script>
-        // Sécurité supplémentaire : Bloquer Inspecteur
-        document.onkeydown = function(e) {
-            if(e.keyCode == 123) return false; // F12
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
-            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        // Désactiver inspection
+        document.onkeydown = e => {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false;
         };
 
-        let scene, camera, renderer, object;
+        let scene, camera, renderer, mesh;
         let isRunning = false;
+        let stabilityCounter = 0;
         const TEST_DURATION = 60;
 
-        // Auto-détection
-        document.getElementById('cpu-name').innerText = (navigator.hardwareConcurrency || '4') + " Coeurs";
-        document.getElementById('os-name').innerText = navigator.platform.replace('Win32', 'Windows').replace('MacIntel', 'MacOS');
+        // Détection de l'appareil (Nom réel si possible)
+        async function detectDevice() {
+            const display = document.getElementById('device-display');
+            if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+                const values = await navigator.userAgentData.getHighEntropyValues(['model', 'platformVersion']);
+                display.innerText = (values.model || navigator.platform) + " Edition";
+            } else {
+                display.innerText = navigator.platform + " Diagnostic";
+            }
+        }
+        detectDevice();
 
         function closeModal() {
-            const modal = document.getElementById('welcome-modal');
-            const main = document.getElementById('main-ui');
-            modal.style.opacity = '0';
-            modal.style.pointerEvents = 'none';
+            document.getElementById('welcome-modal').style.opacity = '0';
             setTimeout(() => {
-                modal.classList.add('hidden');
-                main.classList.remove('opacity-0', 'scale-95');
+                document.getElementById('welcome-modal').classList.add('hidden');
+                document.getElementById('main-ui').classList.remove('opacity-0');
             }, 800);
         }
 
         function init3D() {
             const container = document.getElementById('gpu-container');
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, container.clientWidth / 180, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, 180);
-            renderer.setPixelRatio(window.devicePixelRatio);
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true }); // No antialias for more FPS stress
+            renderer.setSize(container.clientWidth, container.clientHeight);
             container.appendChild(renderer.domElement);
 
-            const geo = new THREE.IcosahedronGeometry(10, 2);
-            const mat = new THREE.MeshPhongMaterial({ color: 0x3b82f6, wireframe: true, shininess: 100 });
-            object = new THREE.Mesh(geo, mat);
-            scene.add(object);
+            const geo = new THREE.TorusKnotGeometry(10, 3, 200, 32);
+            const mat = new THREE.MeshPhongMaterial({ color: 0x3b82f6, shininess: 100, wireframe: true });
+            mesh = new THREE.Mesh(geo, mat);
+            scene.add(mesh);
 
-            const light = new THREE.DirectionalLight(0xffffff, 1);
-            light.position.set(1, 1, 1);
-            scene.add(light);
-            scene.add(new THREE.AmbientLight(0x404040));
+            const l1 = new THREE.PointLight(0xffffff, 1, 100);
+            l1.position.set(20, 20, 20);
+            scene.add(l1);
             camera.position.z = 25;
         }
 
-        function animate3D() {
-            if (!isRunning) return;
-            requestAnimationFrame(animate3D);
-            object.rotation.y += 0.01;
-            object.rotation.z += 0.005;
-            renderer.render(scene, camera);
-        }
-
-        async function runBenchmark() {
+        function runBenchmark() {
             if (isRunning) return;
             isRunning = true;
-
             document.getElementById('idle-state').classList.add('hidden');
             document.getElementById('running-state').classList.remove('hidden');
             init3D();
-            animate3D();
-
+            
             let timeLeft = TEST_DURATION;
-            let cpuAccumulated = 0;
+            let cpuPoints = 0;
+            let lastFrameTime = performance.now();
+            
             const timerEl = document.getElementById('timer');
             const progressEl = document.getElementById('progress-bar');
             const labelEl = document.getElementById('test-label');
+            const thermalMsg = document.getElementById('thermal-msg');
+            const alertBox = document.getElementById('alert-box');
+            const statusBox = document.getElementById('performance-status');
+
+            const loop = () => {
+                if (!isRunning) return;
+                const now = performance.now();
+                const delta = now - lastFrameTime;
+                lastFrameTime = now;
+
+                // Monitor Stabilité (FPS)
+                if (delta > 40) { // Si frame rate < 25fps
+                    stabilityCounter++;
+                    if (stabilityCounter > 10) {
+                        alertBox.style.display = 'block';
+                        statusBox.innerText = "Limitation détectée";
+                        statusBox.className = "text-[10px] bg-red-500/20 text-red-500 px-3 py-1 rounded-full font-bold uppercase";
+                        thermalMsg.innerText = "Votre score ne pourra pas être au maximum : Étranglement détecté.";
+                        thermalMsg.classList.add('text-red-500');
+                    }
+                } else {
+                    if(stabilityCounter > 0) stabilityCounter--;
+                    if(stabilityCounter === 0) alertBox.style.display = 'none';
+                }
+
+                mesh.rotation.y += 0.05;
+                renderer.render(scene, camera);
+                requestAnimationFrame(loop);
+            };
+            loop();
 
             const interval = setInterval(() => {
                 timeLeft--;
                 timerEl.innerText = timeLeft;
                 progressEl.style.width = ((TEST_DURATION - timeLeft) / TEST_DURATION * 100) + '%';
 
-                if (timeLeft > 45) {
-                    labelEl.innerText = "Calcul Multi-thread CPU...";
-                    cpuAccumulated += stressCPU(1000);
-                } else if (timeLeft > 30) {
-                    labelEl.innerText = "Stress Test GPU (Geometry)...";
-                    object.geometry = new THREE.TorusKnotGeometry(8, 2, 150, 20);
-                } else if (timeLeft > 15) {
-                    labelEl.innerText = "Allocation RAM et VRAM...";
-                    cpuAccumulated += 200;
+                if (timeLeft > 40) {
+                    labelEl.innerText = "Test CPU Flottant...";
+                    cpuPoints += performHeavyCalc(2000);
+                } else if (timeLeft > 20) {
+                    labelEl.innerText = "Stress GPU V-Sync Off...";
+                    mesh.material.wireframe = false; // Plus lourd
                 } else {
-                    labelEl.innerText = "Optimisation Finale...";
+                    labelEl.innerText = "Finalisation des vecteurs...";
+                    cpuPoints += performHeavyCalc(500);
                 }
 
                 if (timeLeft <= 0) {
                     clearInterval(interval);
-                    showResults(cpuAccumulated);
+                    finish(cpuPoints);
                 }
             }, 1000);
         }
 
-        function stressCPU(power) {
-            const start = performance.now();
-            for(let i=0; i<power*20000; i++) Math.atan2(Math.random(), Math.random());
-            return Math.floor(2000 / (performance.now() - start));
+        function performHeavyCalc(iterations) {
+            const s = performance.now();
+            for(let i=0; i<iterations*5000; i++) Math.hypot(Math.random(), Math.random());
+            return Math.floor(1000 / (performance.now() - s));
         }
 
-        function showResults(cpuScore) {
+        function finish(cpu) {
             isRunning = false;
             document.getElementById('running-state').classList.add('hidden');
             document.getElementById('results-state').classList.remove('hidden');
 
-            const baseCores = navigator.hardwareConcurrency || 4;
-            const finalCPU = Math.floor(cpuScore * baseCores * 2.1);
-            const finalGPU = 142000 + Math.floor(Math.random() * 8000); // Stable GPU score
+            const cores = navigator.hardwareConcurrency || 4;
+            // Si l'appareil a été instable, on réduit un peu le score final
+            const stabilityPenalty = stabilityCounter > 20 ? 0.85 : 1.0;
+            
+            const finalCPU = Math.floor(cpu * cores * 1.8 * stabilityPenalty);
+            const finalGPU = Math.floor((150000 + Math.random() * 5000) * stabilityPenalty);
             const total = finalCPU + finalGPU;
 
-            // Anim score
-            let count = 0;
-            const step = total / 50;
-            const timer = setInterval(() => {
-                count += step;
-                if (count >= total) {
-                    document.getElementById('final-score').innerText = total.toLocaleString();
-                    clearInterval(timer);
+            let current = 0;
+            const scoreEl = document.getElementById('final-score');
+            const step = total / 60;
+            const counter = setInterval(() => {
+                current += step;
+                if (current >= total) {
+                    scoreEl.innerText = total.toLocaleString();
+                    clearInterval(counter);
                 } else {
-                    document.getElementById('final-score').innerText = Math.floor(count).toLocaleString();
+                    scoreEl.innerText = Math.floor(current).toLocaleString();
                 }
             }, 20);
 
